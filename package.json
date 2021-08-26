@@ -3,7 +3,6 @@
   "version": "4.4.54",
   "description": "drachtio signaling resource framework",
   "main": "lib/srf.js",
-  "types": "types/srf.d.ts",
   "scripts": {
     "test": "NODE_ENV=test node test/ ",
     "coverage": "./node_modules/.bin/nyc --reporter html --report-dir ./coverage npm run test",
