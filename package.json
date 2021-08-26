@@ -22,25 +22,25 @@
   },
   "homepage": "https://github.com/drachtio/drachtio-srf#readme",
   "dependencies": {
-    "async": "^1.4.2",
-    "debug": "^3.2.7",
-    "delegates": "^0.1.0",
+    "async": "^3.2.1",
+    "debug": "^4.3.2",
+    "delegates": "^1.0.0",
     "deprecate": "^1.1.1",
     "drachtio-sip": "^0.6.0",
-    "node-noop": "0.0.1",
+    "node-noop": "1.0.0",
     "only": "0.0.2",
     "sdp-transform": "^2.14.1",
     "short-uuid": "^4.1.0",
     "sip-methods": "^0.3.0",
     "sip-status": "^0.1.0",
-    "utils-merge": "1.0.0",
-    "uuid": "^3.4.0"
+    "utils-merge": "1.0.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "config": "^3.3.3",
-    "eslint": "^7.18.0",
-    "eslint-plugin-promise": "^4.2.1",
+    "config": "^3.3.6",
+    "eslint": "^7.32.0",
+    "eslint-plugin-promise": "^5.1.0",
     "nyc": "^15.1.0",
-    "tape": "^5.2.2"
+    "tape": "^5.3.1"
   }
 }
