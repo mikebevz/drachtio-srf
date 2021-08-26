@@ -3,13 +3,28 @@ export = DigestClient;
  * @type {DigestClient}
  */
 declare class DigestClient {
-    constructor(res: any);
-    res: any;
-    req: any;
-    agent: any;
+    /**
+     *
+     * @param {Response} res
+     * @constructor
+     */
+    constructor(res: Response);
+    /** @type {Response} */
+    res: Response;
+    /** @type {Request} */
+    req: Request;
+    /** @type {DrachtioAgent} */
+    agent: DrachtioAgent;
     nc: any;
-    authenticate(callback: any): void;
+    /**
+     *
+     * @param {Function} callback
+     */
+    authenticate(callback: Function): void;
     _updateNC(): string;
     _compileParams(params: any): string;
     _parseChallenge(digest: any): {};
 }
+import Response = require("./response");
+import Request = require("./request");
+import DrachtioAgent = require("./drachtio-agent");

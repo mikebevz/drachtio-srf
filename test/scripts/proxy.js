@@ -3,10 +3,14 @@ const Srf = require('../..');
 const config = require('config');
 const debug = require('debug')('drachtio:test');
 
+/**
+ * @type {App}
+ */
 class App extends Emitter {
   constructor() {
     super();
 
+    /** @type {Srf} */
     this.srf = new Srf() ;
     this.srf.connect(config.get('drachtio-sut'));
   }

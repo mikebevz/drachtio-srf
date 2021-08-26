@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test node test/ ",
     "coverage": "./node_modules/.bin/nyc --reporter html --report-dir ./coverage npm run test",
     "jslint": "eslint lib",
-    "gentypes": "tsc"
+    "gentypes": "rm lib/*.d.ts && tsc"
   },
   "engines": {
     "node": ">= 6.9.3"

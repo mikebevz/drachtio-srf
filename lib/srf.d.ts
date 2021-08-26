@@ -1,15 +1,16 @@
+/// <reference types="node" />
 declare const _exports: typeof Srf;
 export = _exports;
 /**
  * Applications create an instance of Srf in order to create and manage SIP [Dialogs]{@link Dialog}
  * and SIP transactions.  An application may have one or more Srf instances, although for most cases a single
  * instance is sufficient.
- * @type {Srf}
+ * @extends {Emitter}
  */
-declare class Srf {
+declare class Srf extends Emitter {
     /**
      * a SIP Dialog
-     * @returns {Dialog}
+     * @return {Dialog}
      */
     static get Dialog(): any;
     /**
@@ -46,48 +47,63 @@ declare class Srf {
     static get parseUri(): Function;
     static get stringifyUri(): any;
     /**
-     * @returns {SipMessage}
+     * @returns {import('drachtio-sip').SipMessage}
      */
     static get SipMessage(): any;
     /**
-     * @return {SipRequest}
+     * @return {typeof Request}
      */
-    static get SipRequest(): SipRequest;
+    static get SipRequest(): typeof Request;
     /**
-     * @return {SipResponse}
+     * @return {typeof Response}
      */
-    static get SipResponse(): SipResponse;
+    static get SipResponse(): typeof Response;
     /**
-     * @return {DialogState}
+     * @return {typeof DialogState}
      */
-    static get DialogState(): DialogState;
+    static get DialogState(): typeof DialogState;
     /**
-     * @return {DialogDirection}
+     * @return {typeof DialogDirection}
      */
-    static get DialogDirection(): DialogDirection;
+    static get DialogDirection(): typeof DialogDirection;
     /**
      * Creates an instance of an signaling resource framework.
-     * @param {string|Array} tag a string or array of strings, representing tag values for this application.
+     * @param {string|Array|Object} [app] a string or array of strings, representing tag values for this application.
      * Tags can be used in conjunction with a call routing web callback to direct requests to particular applications.
+     * @constructor
      */
-    constructor(app: any);
-    _dialogs: any;
-    _tags: any;
-    _app: any;
+    constructor(app?: string | any[] | any);
+    /** @type {Map<string, Dialog>} */
+    _dialogs: Map<string, any>;
+    _tags: any[];
+    _app: import('./connect');
+    get app(): drachtio;
     /**
      *
-     * @param {string} event
-     * @param {Function} fn
-     * @return {Srf}
+     * @param {Object} opts
+     * @param {string} opts.host
+     * @param {number} opts.port
+     * @param {string} opts.secret
+     * @param {Function} [callback]
+     * @returns
      */
-    on(event: string, fn: Function, ...args: any[]): Srf;
+    connect(opts: {
+        host: string;
+        port: number;
+        secret: string;
+    }, callback?: Function): any;
     /**
-     * @param {App}
+     *
+     * @param {Object} opts
+     * @param {Function} [callback]
+     * @returns
      */
-    get app(): any;
-    connect(opts: any, callback: any): any;
-    listen(opts: any, callback: any): any;
-    dialog(opts: any): (req: any, res: any, next: any) => void;
+    listen(opts: any, callback?: Function): any;
+    /**
+     * drachtio middleware that enables Dialog handling
+     * @param {Object} opts - configuration arguments, if any (currently unused)
+     */
+    dialog(opts: any): (req: Request, res: Response, next: Function) => void;
     /**
      * create a SIP dialog, acting as a UAS (user agent server); i.e.
      * respond to an incoming SIP INVITE with a 200 OK
@@ -95,13 +111,15 @@ declare class Srf {
      *
      * Note that the {@link Dialog} is generated (i.e. the callback invoked / the Promise resolved)
      * at the moment that the 200 OK is sent back towards the requestor, not when the ACK is subsequently received.
-     * @param  {Object} req the incoming sip request object
-     * @param  {Object} res the sip response object
+     * @param  {Request} req the incoming sip request object
+     * @param  {Response} res the sip response object
      * @param  {Object} opts configuration options
-     * @param {string} opts.localSdp the local session description protocol to include in the SIP response
+     * @param {Object} [opts.dialogStateEmitter]
+     * @param {string} [opts.body]
+     * @param {string|Function} [opts.localSdp] the local session description protocol to include in the SIP response
      * @param {Object} [opts.headers] SIP headers to include on the SIP response to the INVITE
      * @param  {function} [callback] if provided, callback with signature <code>(err, dialog)</code>
-     * @return {Srf|Promise} if a callback is supplied, a reference to the Srf instance.
+     * @return {Srf|Promise<Srf>} if a callback is supplied, a reference to the Srf instance.
      * <br/>If no callback is supplied, then a Promise that is resolved
      * with the [sip dialog]{@link Dialog} that is created.
      *
@@ -148,10 +166,12 @@ declare class Srf {
      *     }
      *   }).then((uas) => { ..});
      */
-    createUAS(req: any, res: any, opts?: {
-        localSdp: string;
+    createUAS(req: Request, res: Response, opts?: {
+        dialogStateEmitter?: any;
+        body?: string;
+        localSdp?: string | Function;
         headers?: any;
-    }, callback?: Function): Srf | Promise<any>;
+    }, callback?: Function): Srf | Promise<Srf>;
     /**
     * create a SIP dialog, acting as a UAC (user agent client)
     *
@@ -161,15 +181,19 @@ declare class Srf {
     * @param  {string}  opts.localSdp the local session description protocol to include in the SIP INVITE request
     * @param  {string}  [opts.proxy] send the request through an outbound proxy,
     * specified as full sip uri or address[:port]
-    * @param  {Object|Function}  opts.auth sip credentials to use if challenged,
+    * @param  {Object}  opts.auth sip credentials to use if challenged,
     * or a function invoked with (req, res) and returning (err, username, password) where req is the
     * request that was sent and res is the response that included the digest challenge
     * @param  {string}  opts.auth.username sip username
     * @param  {string}  opts.auth.password sip password
-    * @param  {Object} [progressCallbacks] callbacks providing call progress notification
-    * @param {Function} [progressCallbacks.cbRequest] - callback that provides request sent over the wire,
+    * @param  {string} opts.method
+    * @param {string} opts.uri
+    * @param {string} opts.calledNumber
+    * @param {string} opts.callingNumber
+    * @param {string} opts.callingName
+    * @param {Function|Object} [cbRequest] - callback that provides request sent over the wire,
     * with signature (req)
-    * @param {Function} [progressCallbacks.cbProvisional] - callback that provides a provisional response
+    * @param {Function} [cbProvisional] - callback that provides a provisional response
     * with signature (provisionalRes)
     * @param  {Function} [callback] if provided, callback with signature <code>(err, dialog)</code>
     * @return {Srf|Promise} if a callback is supplied, a reference to the Srf instance.
@@ -233,8 +257,16 @@ declare class Srf {
         headers?: any;
         localSdp: string;
         proxy?: string;
-        auth: any | Function;
-    }, cbRequest: any, cbProvisional: any, callback?: Function): Srf | Promise<any>;
+        auth: {
+            username: string;
+            password: string;
+        };
+        method: string;
+        uri: string;
+        calledNumber: string;
+        callingNumber: string;
+        callingName: string;
+    }, cbRequest?: Function | any, cbProvisional?: Function, callback?: Function): Srf | Promise<any>;
     /**
     * create back-to-back dialogs; i.e. act as a back-to-back user agent (B2BUA), creating a
     * pair of dialogs {uas, uac} -- a UAS dialog facing the caller or A party, and a UAC dialog
@@ -269,20 +301,15 @@ declare class Srf {
     * from B leg back to the A leg
     * @param  {string}  [opts.proxy] send the request through an outbound proxy,
     * specified as full sip uri or address[:port]
-    * @param  {Object|Function}  opts.auth sip credentials to use if challenged,
+    * @param  {Object}  opts.auth sip credentials to use if challenged,
     * or a function invoked with (req, res) and returning (err, username, password) where req is the
     * request that was sent and res is the response that included the digest challenge
-    * @param  {string}  opts.auth.username sip username
-    * @param  {string}  opts.auth.password sip password
-    * @param  {Object} [progressCallbacks] callbacks providing call progress notification
-    * @param {Function} [progressCallbacks.cbRequest] - callback that provides request sent over the wire,
+    * @param  {string}  [opts.auth.username] sip username
+    * @param  {string}  [opts.auth.password] sip password
+    * @param {Function|Object} [cbRequest] - callback that provides request sent over the wire,
     * with signature (req)
-    * @param {Function} [progressCallbacks.cbProvisional] - callback that provides a provisional response
+    * @param {Function} [cbProvisional] - callback that provides a provisional response
     * with signature (provisionalRes)
-    * @param {Function} [progressCallbacks.cbFinalizedUac] - callback that provides the UAC dialog as soon as
-    * the 200 OK is received from the B party.  Since the UAC dialog is also returned when the B2B has been completely
-    * constructed, this is mainly useful if there is some need to be notified as soon as the B party answers.
-    * The callback signature is (uac).
     * @param  {function} [callback] if provided, callback with signature <code>(err, {uas, uac})</code>
     * @return {Srf|Promise} if a callback is supplied, a reference to the Srf instance.
     * <br/>If no callback is supplied, then a Promise that is resolved
@@ -398,8 +425,11 @@ declare class Srf {
         passFailure?: boolean;
         passProvisionalResponses?: boolean;
         proxy?: string;
-        auth: any | Function;
-    }, cbRequest: any, cbProvisional: any, callback?: Function): Srf | Promise<any>;
+        auth: {
+            username?: string;
+            password?: string;
+        };
+    }, cbRequest?: Function | any, cbProvisional?: Function, callback?: Function): Srf | Promise<any>;
     /**
     * proxy an incoming request
     * @param  {Request}   req - drachtio request object representing an incoming SIP request
@@ -454,19 +484,28 @@ declare class Srf {
     }, callback?: Function): Srf | Promise<any>;
     /**
      * Send an outbound request outside of a Dialog.
-     * @param {String} uri - request-uri
+     * @param {Socket} socket
+     * @param {Request|Object} uri - request-uri
      * @param {Object} opts - options
-     * @param {String} method SIP method for the request
+     * @param {String} opts.method SIP method for the request
      * @param {Object} [opts.headers] SIP headers to include on the request
-     * @param {String} [body] body to include with the request
+     * @param {String} [opts.body] body to include with the request
      * @param {Object} [opts.auth] authentication to use if challenged
      * @param {String} [opts.auth.username] sip username
      * @param {String} [opts.auth.password] sip password
-     * @param  {function} [callback] - callback invoked when request is sent, signature (err, requestSent)
+     * @param {Function|Object} [callback] - callback invoked when request is sent, signature (err, requestSent)
     * where `requestSent` is a SipRequest sent out over the wire
     * @returns {Srf|Promise} returns a Promise if no callback is supplied, otherwise the Srf object
      */
-    request(socket: any, uri: string, opts: any, callback?: Function): Srf | Promise<any>;
+    request(socket: Socket, uri: Request | any, opts: {
+        method: string;
+        headers?: any;
+        body?: string;
+        auth?: {
+            username?: string;
+            password?: string;
+        };
+    }, callback?: Function | any): Srf | Promise<any>;
     /**
      * Returns an existing dialog for a given dialog id, if it exists
      * @param {String} stackDialogId dialog id
@@ -480,33 +519,83 @@ declare class Srf {
     findDialogByCallIDAndFromTag(callId: string, tag: string): any;
     createUasDialog(req: any, res: any, opts: any, cb: any): void;
     createUacDialog(uri: any, opts: any, cb: any, cbProvisional: any): Promise<any>;
-    createBackToBackDialogs(req: any, res: any, uri: any, opts: any, cb: any): undefined;
+    /**
+     *
+     * @param {Request} req
+     * @param {Response} res
+     * @param {string|string[]} uri
+     * @param {Object} opts
+     * @param {string} [opts.method]
+     * @param {Array} [opts.proxyRequestHeaders]
+     * @param {Array} [opts.proxyResponseHeaders]
+     * @param {string} [opts.callingNumber]
+     * @param {string} [opts.calledNumber]
+     * @param {Object} [opts.headers]
+     * @param {Object|string} [opts.localSdpB]
+     * @param {Object|string} [opts.localSdp]
+     * @param {Function} [opts.onProvisional]
+     * @param {Function|string} [opts.localSdpA]
+     * @param {Function} cb
+     * @returns
+     */
+    createBackToBackDialogs(req: Request, res: Response, uri: string | string[], opts: {
+        method?: string;
+        proxyRequestHeaders?: any[];
+        proxyResponseHeaders?: any[];
+        callingNumber?: string;
+        calledNumber?: string;
+        headers?: any;
+        localSdpB?: any | string;
+        localSdp?: any | string;
+        onProvisional?: Function;
+        localSdpA?: Function | string;
+    }, cb: Function): undefined;
+    /**
+     *
+     * @param {Object} dialog
+     */
     addDialog(dialog: any): void;
+    /**
+     *
+     * @param {Object} dialog
+     */
     removeDialog(dialog: any): void;
-    _b2bRequestWithinDialog(dlg: any, req: any, res: any, proxyRequestHeaders: any, proxyResponseHeaders: any, callback: any): void;
+    /**
+     *
+     * @param {Object} dlg
+     * @param {Request} req
+     * @param {Response} res
+     * @param {*} proxyRequestHeaders
+     * @param {*} proxyResponseHeaders
+     * @param {Function} [callback]
+     */
+    _b2bRequestWithinDialog(dlg: any, req: Request, res: Response, proxyRequestHeaders: any, proxyResponseHeaders: any, callback?: Function): void;
+    endSession(...args: any[]): any;
+    disconnect(...args: any[]): any;
+    set(...args: any[]): any;
+    get(...args: any[]): any;
+    use(...args: any[]): any;
+    set locals(arg: any);
+    get locals(): any;
+    get idle(): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    invite(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    register(cb: (req: Request, res: Response) => void): any;
 }
-import SipRequest = require("./request");
-import SipResponse = require("./response");
-/**
- * @type {DialogState}
- */
-declare class DialogState {
-}
-declare namespace DialogState {
-    const Trying: string;
-    const Proceeding: string;
-    const Early: string;
-    const Confirmed: string;
-    const Terminated: string;
-    const Rejected: string;
-    const Cancelled: string;
-}
-/**
- * @type {DialogDirection}
- */
-declare class DialogDirection {
-}
-declare namespace DialogDirection {
-    const Initiator: string;
-    const Recipient: string;
-}
+import Emitter = require("events");
+import drachtio = require("./connect");
+import Request = require("./request");
+import Response = require("./response");
+import Socket_1 = require("net");
+import Socket = Socket_1.Socket;
+import { DialogState } from "./types";
+import { DialogDirection } from "./types";

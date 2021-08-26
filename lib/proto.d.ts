@@ -1,24 +1,52 @@
-export var _init: any;
-export var connect: any;
-export var listen: any;
-export function endSession(socketHolder: any): void;
-export function request(): never;
-export function set(prop: any, value: any): void;
-export function get(prop: any): any;
+export = app;
 /**
- * Utilize the given middleware `handle` to the given `method`,
- * defaulting to _*_, which means execute for all methods.
- *
- * @param {String|Function} method or callback
- * @param {Function} callback
- * @return {Server} for chaining
- * @api public
- */
-export function use(fn: any, ...args: any[]): any;
-/**
- * Handle server requests, punting them down
- * the middleware stack.
- *
- * @api private
- */
-export function handle(req: any, res: any, out: any): void;
+   *
+   * @param {Request} req
+   * @param {Response} res
+   * @param {Function} next
+   */
+declare function app(req: Request, res: Response, next: Function): void;
+declare namespace app {
+    /**
+     * @api private
+     * @returns {Agent}
+     */
+    function _init(): Agent;
+    /**
+     * @api private
+     * @returns {app}
+     */
+    function connect(...args: any[]): typeof app;
+    /**
+     * @api private
+     * @returns {app}
+     */
+    function listen(...args: any[]): typeof app;
+    /**
+     *
+     * @param {Object} socketHolder
+     */
+    function endSession(socketHolder: any): void;
+    function request(): never;
+    function set(prop: any, value: any): void;
+    function get(prop: any): any;
+    /**
+     * Utilize the given middleware `handle` to the given `method`,
+     * defaulting to _*_, which means execute for all methods.
+     *
+     * @param {String|Function} fn method or callback
+     * @return {app} for chaining
+     * @api public
+     */
+    function use(fn: string | Function, ...args: any[]): typeof app;
+    /**
+     * Handle server requests, punting them down
+     * the middleware stack.
+     * @param {Request} req
+     * @param {Response} res
+     * @api private
+     *
+     */
+    function handle(req: Request, res: Response, out: any): void;
+}
+import Agent = require("./drachtio-agent");

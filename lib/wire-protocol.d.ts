@@ -1,16 +1,36 @@
 export = WireProtocol;
 /**
  * @type {WireProtocol}
- * @extends {EventEmitter}
+ * @extends {Emitter}
  */
-declare class WireProtocol {
-    constructor(opts: any);
+declare class WireProtocol extends Emitter {
+    /**
+     *
+     * @param {Object} opts
+     * @param {Object} opts.logger
+     */
+    constructor(opts: {
+        logger: any;
+    });
     _logger: any;
     mapIncomingMsg: any;
     enablePing: any;
     pingInterval: any;
     mapTimerPing: any;
-    connect(opts: any): void;
+    /**
+     *
+     * @param {Object} opts
+     * @param {string} opts.host
+     * @param {number} opts.port
+     * @param {Object} [opts.reconnect]
+     * @param {import('tls').ConnectionOptions} [opts.tls]
+     */
+    connect(opts: {
+        host: string;
+        port: number;
+        reconnect?: any;
+        tls?: import('tls').ConnectionOptions;
+    }): void;
     host: any;
     port: any;
     reconnectOpts: any;
@@ -35,3 +55,4 @@ declare class WireProtocol {
     closing: any;
     close(callback: any): void;
 }
+import Emitter = require("events");

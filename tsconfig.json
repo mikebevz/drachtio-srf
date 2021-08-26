@@ -1,7 +1,9 @@
 {
   // Change this to match your project
-  "include": ["lib/**/*"],
+  "include": ["lib/**/*.js"],
   "compilerOptions": {
+    "target": "ES2015",
+    "moduleResolution": "node",
     // Tells TypeScript to read JS files, as
     // normally they are ignored as source files
     "allowJs": true,
@@ -17,6 +19,7 @@
     "outDir": "lib"
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "lib/**/*.d.ts"
   ]
 }
