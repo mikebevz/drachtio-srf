@@ -3,12 +3,13 @@
   "include": ["lib/**/*.js"],
   "compilerOptions": {
     "target": "ES2015",
+    "module": "CommonJS",
     "moduleResolution": "node",
     // Tells TypeScript to read JS files, as
     // normally they are ignored as source files
     "allowJs": true,
     // Generate d.ts files
-    "checkJs": false,
+    "checkJs": true,
     "declaration": true,
     // This compiler run should
     // only output d.ts files
@@ -16,10 +17,22 @@
     // Types should go into this directory.
     // Removing this would place the .d.ts files
     // next to the .js files
-    "outDir": "lib"
+    "outDir": "lib",
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    // "types": [
+    //   "node",
+    // ],
+    "lib": [
+      "DOM",
+      "ES2015",
+      "ScriptHost"
+    ]
   },
   "exclude": [
     "node_modules",
-    "lib/**/*.d.ts"
+    "/lib/**/*.d.ts"
   ]
 }

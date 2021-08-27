@@ -1,15 +1,14 @@
 /// <reference types="node" />
-declare const _exports: typeof Dialog;
-export = _exports;
 /**
  * Class representing a SIP Dialog.
  *
  * Note that instances of this class are not created directly by your code;
  * rather they are returned from the {@link Srf#createUAC}, {@link Srf#createUAC}, and {@link Srf#createB2BUA}
  * @class
- *
+ * @extends {Emitter}
+ * @type {Dialog}
  */
-declare class Dialog extends Emitter {
+export class Dialog extends Emitter {
     /**
      * Constructor that is called internally by Srf when generating a Dialog instance.
      * @param {Object} srf - Srf instance that created this dialog
@@ -35,14 +34,11 @@ declare class Dialog extends Emitter {
     res: Response;
     /** @type {DrachtioAgent} */
     agent: DrachtioAgent;
-    onHold: boolean;
-    connected: boolean;
-    queuedRequests: any[];
-    _queueRequests: boolean;
-    _reinvitesInProgress: {
-        count: number;
-        admitOne: any[];
-    };
+    onHold: any;
+    connected: any;
+    queuedRequests: any;
+    _queueRequests: any;
+    _reinvitesInProgress: any;
     /**
      * sip properties that uniquely identify this Dialog
      * @type {Object}
@@ -65,7 +61,7 @@ declare class Dialog extends Emitter {
      * @property {String} sdp - session description protocol
      */
     remote: any;
-    subscriptions: any[];
+    subscriptions: any;
     /**
      * @return {string}
      */
@@ -79,9 +75,9 @@ declare class Dialog extends Emitter {
     set queueRequests(arg: any);
     toJSON(): any;
     toString(): any;
-    getCountOfSubscriptions(): number;
-    addSubscription(req: any): number;
-    removeSubscription(uri: any, event: any): number;
+    getCountOfSubscriptions(): any;
+    addSubscription(req: any): any;
+    removeSubscription(uri: any, event: any): any;
     /**
      * destroy the sip dialog by generating a BYE request (in the case of INVITE dialog),
      * or NOTIFY (in the case of SUBSCRIBE)
@@ -101,7 +97,7 @@ declare class Dialog extends Emitter {
      * @return {Promise|Dialog} if no callback is supplied, otherwise the function returns a reference to the Dialog
      */
     modify(sdp: string, opts: any, callback?: Function): Promise<any> | Dialog;
-    _promiseTxnInProgress: Promise<any>;
+    _promiseTxnInProgress: any;
     /**
      * send a request within a dialog.
      * Note that you may also call <code>request.info(..)</code> as a shortcut
@@ -125,7 +121,14 @@ declare class Dialog extends Emitter {
         auth?: any;
         noAck?: boolean;
     }, callback?: Function): Promise<Dialog> | Dialog;
-    handle(req: any, res: any): void;
+    /**
+     *
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function|null} next
+     * @returns
+     */
+    handle(req: Request, res: Response, next?: Function | null): void;
     /**
      *
      * @param {Object} opts

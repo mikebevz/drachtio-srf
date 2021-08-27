@@ -1,4 +1,10 @@
-declare const _exports: typeof SipError;
+declare const _exports: {
+    new (status: number, ...reason?: any[]): SipError;
+    captureStackTrace(targetObject: object, constructorOpt?: Function): void;
+    prepareStackTrace?: (err: Error, stackTraces: NodeJS.CallSite[]) => any;
+    stackTraceLimit: number;
+    SipError: typeof SipError;
+};
 export = _exports;
 /**
  * Class representing a SIP non-success response to a transaction
@@ -6,7 +12,7 @@ export = _exports;
  * @type {SipError}
  * @class
  */
-declare class SipError extends Error {
+export class SipError extends Error {
     /**
      * Create a SipError object
      *
@@ -20,6 +26,7 @@ declare class SipError extends Error {
     status: number;
     /** @type {string} */
     reason: string;
-    /** @type {import('./srf').Response} */
-    res: any;
+    /** @type {Response} */
+    res: Response;
 }
+import Response = require("./response");

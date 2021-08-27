@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test node test/ ",
     "coverage": "./node_modules/.bin/nyc --reporter html --report-dir ./coverage npm run test",
     "jslint": "eslint lib",
-    "gentypes": "rm lib/*.d.ts && tsc"
+    "gentypes": "rm -rf lib/*.d.ts && tsc"
   },
   "engines": {
     "node": ">= 6.9.3"
@@ -27,7 +27,7 @@
     "debug": "^4.3.2",
     "delegates": "^1.0.0",
     "deprecate": "^1.1.1",
-    "drachtio-sip": "^0.6.0",
+    "drachtio-sip": "mikebevz/drachtio-sip",
     "node-noop": "1.0.0",
     "only": "0.0.2",
     "sdp-transform": "^2.14.1",
@@ -41,6 +41,8 @@
     "@types/async": "^3.2.7",
     "@types/debug": "^4.1.7",
     "@types/deprecate": "^1.1.0",
+    "@types/lodash": "^4.14.172",
+    "@types/node": "^14",
     "@types/sdp-transform": "^2.4.5",
     "@types/utils-merge": "0.0.28",
     "@types/uuid": "^8.3.1",

@@ -1,6 +1,6 @@
 export type Request = import('./request');
 export type Response = import('./response');
-export type Dialog = typeof import('./dialog');
+export type Dialog = typeof import('./dialog').Dialog;
 /**
  * @typedef {import('./request')} Request
  */
@@ -8,7 +8,7 @@ export type Dialog = typeof import('./dialog');
  * @typedef {import('./response')} Response
  */
 /**
- * @typedef {typeof import('./dialog')} Dialog
+ * @typedef {typeof import('./dialog').Dialog} Dialog
  */
 /**
  * @type {DialogState}

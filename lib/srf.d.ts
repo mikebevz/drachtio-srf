@@ -6,19 +6,20 @@ export = _exports;
  * and SIP transactions.  An application may have one or more Srf instances, although for most cases a single
  * instance is sufficient.
  * @extends {Emitter}
+ * @type {Srf}
  */
 declare class Srf extends Emitter {
     /**
      * a SIP Dialog
-     * @return {Dialog}
+     * @return {typeof Dialog}
      */
-    static get Dialog(): any;
+    static get Dialog(): typeof Dialog;
     /**
      * inherits from Error and represents a non-success final SIP response to a request;
      * status and reason properties provide the numeric sip status code and the reason for the failure.
-     * @return {SipError}
+     * @return {typeof SipError}
      */
-    static get SipError(): any;
+    static get SipError(): typeof SipError;
     /**
      * parses a SIP uri string
      * @return {Function} a function that takes a SIP uri and returns an object
@@ -74,10 +75,10 @@ declare class Srf extends Emitter {
      */
     constructor(app?: string | any[] | any);
     /** @type {Map<string, Dialog>} */
-    _dialogs: Map<string, any>;
-    _tags: any[];
-    _app: import('./connect');
-    get app(): drachtio;
+    _dialogs: Map<string, Dialog>;
+    _tags: any;
+    _app: any;
+    get app(): any;
     /**
      *
      * @param {Object} opts
@@ -175,7 +176,7 @@ declare class Srf extends Emitter {
     /**
     * create a SIP dialog, acting as a UAC (user agent client)
     *
-    * @param  {string}   uri -  request uri to send to
+    * @param  {string|Object}   uri -  request uri to send to
     * @param  {Object}  opts   configuration options
     * @param  {Object}  [opts.headers] SIP headers to include on the SIP INVITE request
     * @param  {string}  opts.localSdp the local session description protocol to include in the SIP INVITE request
@@ -253,7 +254,7 @@ declare class Srf extends Emitter {
     *   inviteSent.cancel();
     * }, 500);
     */
-    createUAC(uri: string, opts: {
+    createUAC(uri: string | any, opts: {
         headers?: any;
         localSdp: string;
         proxy?: string;
@@ -271,8 +272,8 @@ declare class Srf extends Emitter {
     * create back-to-back dialogs; i.e. act as a back-to-back user agent (B2BUA), creating a
     * pair of dialogs {uas, uac} -- a UAS dialog facing the caller or A party, and a UAC dialog
     * facing the callee or B party such that media flows between them
-    * @param  {Object}  req  - incoming sip request object
-    * @param  {Object}  res  - incoming sip response object
+    * @param  {Request}  req  - incoming sip request object
+    * @param  {Response}  res  - incoming sip response object
     * @param  {string}  uri - sip uri or IP address[:port] to send the UAC INVITE to
     * @param  {Object}  opts -   configuration options
     * @param {Object} [opts.headers] SIP headers to include on the SIP INVITE request to the B party
@@ -301,16 +302,25 @@ declare class Srf extends Emitter {
     * from B leg back to the A leg
     * @param  {string}  [opts.proxy] send the request through an outbound proxy,
     * specified as full sip uri or address[:port]
-    * @param  {Object}  opts.auth sip credentials to use if challenged,
+    * @param  {Object}  [opts.auth] sip credentials to use if challenged,
     * or a function invoked with (req, res) and returning (err, username, password) where req is the
     * request that was sent and res is the response that included the digest challenge
     * @param  {string}  [opts.auth.username] sip username
     * @param  {string}  [opts.auth.password] sip password
+    * @param  {string} [opts.uri]
+    * @param  {string} [opts.callingNumber]
+    * @param  {string} [opts.callingName]
+    * @param  {string} [opts.calledNumber]
+    * @param  {string} [opts.method]
+    * @param  {string} [opts.localSdp]
+    * @param  {boolean} [opts.noAck]
+    * @param  {Object} [opts._socket]
+    * @param  {Object} [opts.dialogStateEmitter]
     * @param {Function|Object} [cbRequest] - callback that provides request sent over the wire,
     * with signature (req)
     * @param {Function} [cbProvisional] - callback that provides a provisional response
     * with signature (provisionalRes)
-    * @param  {function} [callback] if provided, callback with signature <code>(err, {uas, uac})</code>
+    * @param  {Function} [callback] if provided, callback with signature <code>(err, {uas, uac})</code>
     * @return {Srf|Promise} if a callback is supplied, a reference to the Srf instance.
     * <br/>If no callback is supplied, then a Promise that is resolved
     * with the [sip dialog]{@link Dialog} that is created.
@@ -415,7 +425,7 @@ declare class Srf extends Emitter {
     * });
   
     */
-    createB2BUA(req: any, res: any, uri: string, opts: {
+    createB2BUA(req: Request, res: Response, uri: string, opts: {
         headers?: any;
         responseHeaders?: any;
         localSdpA?: string | Function;
@@ -425,10 +435,19 @@ declare class Srf extends Emitter {
         passFailure?: boolean;
         passProvisionalResponses?: boolean;
         proxy?: string;
-        auth: {
+        auth?: {
             username?: string;
             password?: string;
         };
+        uri?: string;
+        callingNumber?: string;
+        callingName?: string;
+        calledNumber?: string;
+        method?: string;
+        localSdp?: string;
+        noAck?: boolean;
+        _socket?: any;
+        dialogStateEmitter?: any;
     }, cbRequest?: Function | any, cbProvisional?: Function, callback?: Function): Srf | Promise<any>;
     /**
     * proxy an incoming request
@@ -510,13 +529,13 @@ declare class Srf extends Emitter {
      * Returns an existing dialog for a given dialog id, if it exists
      * @param {String} stackDialogId dialog id
      */
-    findDialogById(stackDialogId: string): any;
+    findDialogById(stackDialogId: string): Dialog;
     /**
      * Returns an existing dialog for a given sip call-id and from tag, if it exists
      * @param {String} callId SIP Call-ID
      * @param {String} tag SIP From tag
      */
-    findDialogByCallIDAndFromTag(callId: string, tag: string): any;
+    findDialogByCallIDAndFromTag(callId: string, tag: string): Dialog;
     createUasDialog(req: any, res: any, opts: any, cb: any): void;
     createUacDialog(uri: any, opts: any, cb: any, cbProvisional: any): Promise<any>;
     /**
@@ -592,10 +611,13 @@ declare class Srf extends Emitter {
     register(cb: (req: Request, res: Response) => void): any;
 }
 import Emitter = require("events");
-import drachtio = require("./connect");
+import Dialog_1 = require("./dialog");
+import Dialog = Dialog_1.Dialog;
 import Request = require("./request");
 import Response = require("./response");
 import Socket_1 = require("net");
 import Socket = Socket_1.Socket;
+import SipError_1 = require("./sip_error");
+import SipError = SipError_1.SipError;
 import { DialogState } from "./types";
 import { DialogDirection } from "./types";
