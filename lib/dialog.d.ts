@@ -67,7 +67,7 @@ export class Dialog extends Emitter {
      */
     get id(): string;
     get dialogType(): string;
-    get subscribeEvent(): any;
+    get subscribeEvent(): string;
     get socket(): import("net").Socket | import("tls").TLSSocket;
     set stateEmitter(arg: any);
     _emitter: any;

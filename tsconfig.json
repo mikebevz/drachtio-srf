@@ -9,7 +9,7 @@
     // normally they are ignored as source files
     "allowJs": true,
     // Generate d.ts files
-    "checkJs": true,
+    "checkJs": false,
     "declaration": true,
     // This compiler run should
     // only output d.ts files

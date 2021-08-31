@@ -1,6 +1,6 @@
 {
   "name": "drachtio-srf",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "description": "drachtio signaling resource framework",
   "main": "lib/srf.js",
   "scripts": {
@@ -31,7 +31,7 @@
     "node-noop": "1.0.0",
     "only": "0.0.2",
     "sdp-transform": "^2.14.1",
-    "short-uuid": "^4.1.0",
+    "short-uuid": "^4.2.0",
     "sip-methods": "^0.3.0",
     "sip-status": "^0.1.0",
     "utils-merge": "1.0.1",
@@ -51,6 +51,6 @@
     "eslint-plugin-promise": "^5.1.0",
     "nyc": "^15.1.0",
     "tape": "^5.3.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.2"
   }
 }

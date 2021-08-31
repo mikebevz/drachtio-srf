@@ -12,6 +12,7 @@ export = DrachtioAgent;
   * @property {boolean} socket.ready
   * @property {string | null} socket.hostport
   * @property {string | null} socket.serverVersion
+  * @property {net.Socket | tls.TLSSocket} [socket]
   */
 /**
  * @type {DrachtioAgent}
@@ -64,6 +65,8 @@ declare class DrachtioAgent extends Emitter {
      * @param {string} params.options.stackTxnId
      * @param {string} params.options.proxy
      * @param {Object} params.options.auth
+     * @param {string} params.options.method
+     * @param {Function} params.callback
      */
     _makeRequest(params: {
         socket: net.Socket | tls.TLSSocket;
@@ -73,12 +76,20 @@ declare class DrachtioAgent extends Emitter {
             stackTxnId: string;
             proxy: string;
             auth: any;
+            method: string;
         };
+        callback: Function;
     }): void;
     request(socket: any, request_uri: any, options: any, callback: any): void;
     sendResponse(res: any, opts: any, callback: any, fnAck: any): void;
     sendAck(method: any, dialogId: any, req: any, res: any, opts: any, callback: any): void;
-    proxy(req: any, opts: any, callback: any): void;
+    /**
+     *
+     * @param {Request} req
+     * @param {Object} opts
+     * @param {Function} callback
+     */
+    proxy(req: Request, opts: any, callback: Function): void;
     set(prop: any, val: any): void;
     get(prop: any): string;
     /**
@@ -144,4 +155,6 @@ type SocketObject = {
     ready: boolean;
     hostport: string | null;
     serverVersion: string | null;
+    socket?: net.Socket | tls.TLSSocket;
 };
+import Request = require("./request");

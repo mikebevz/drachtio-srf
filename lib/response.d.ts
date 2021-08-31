@@ -11,7 +11,7 @@ declare class Response extends Emitter {
      */
     constructor(agent: import('./drachtio-agent'));
     _agent: import("./drachtio-agent");
-    msg: any;
+    msg: sip.SipMessage;
     finished: boolean;
     /** @type {Srf}  */
     srf: any;
@@ -48,10 +48,10 @@ declare class Response extends Emitter {
     stackTime: any;
     stackTxnId: any;
     stackDialogId: any;
-    set statusCode(arg: any);
-    get statusCode(): any;
-    set status(arg: any);
-    get status(): any;
+    set statusCode(arg: number);
+    get statusCode(): number;
+    set status(arg: number);
+    get status(): number;
     get finalResponseSent(): boolean;
     get headersSent(): boolean;
     /**
@@ -96,7 +96,7 @@ declare class Response extends Emitter {
      * @param {string} hdrValue
      * @returns
      */
-    setHeader(hdrName: string, hdrValue: string): any;
+    setHeader(hdrName: string, hdrValue: string): sip.SipMessage;
     /**
      *
      * @param {VoidFunction | string} data
@@ -104,20 +104,21 @@ declare class Response extends Emitter {
      * @param {VoidFunction} callback
      */
     end(data: VoidFunction | string, encoding: VoidFunction | string, callback: VoidFunction): void;
-    get(...args: any[]): any;
-    has(...args: any[]): any;
+    get(...args: any[]): string;
+    has(...args: any[]): boolean;
     getParsedHeader(...args: any[]): any;
-    set(...args: any[]): any;
-    set headers(arg: any);
-    get headers(): any;
-    set body(arg: any);
-    get body(): any;
+    set(...args: any[]): sip.SipMessage;
+    set headers(arg: Record<string, string>);
+    get headers(): Record<string, string>;
+    set body(arg: string);
+    get body(): string;
     set payload(arg: any);
     get payload(): any;
-    set reason(arg: any);
-    get reason(): any;
-    get raw(): any;
-    get type(): any;
+    set reason(arg: string);
+    get reason(): string;
+    get raw(): string;
+    get type(): "request" | "response";
 }
 import Emitter_1 = require("events");
 import Emitter = Emitter_1.EventEmitter;
+import sip = require("drachtio-sip");

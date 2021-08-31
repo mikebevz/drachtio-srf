@@ -10,7 +10,7 @@ declare class Request extends Emitter {
      * @param {Object} meta
      * @constructor
      */
-    constructor(msg: any, meta: any);
+    constructor(msg: sip.SipMessage, meta: any);
     /** @type {import('net').Socket | import('tls').TLSSocket} */
     socket: import('net').Socket | import('tls').TLSSocket;
     _passport: any;
@@ -22,7 +22,7 @@ declare class Request extends Emitter {
     _dialogState: any;
     canceled: boolean;
     /** @type {sip.SipMessage} */
-    msg: any;
+    msg: sip.SipMessage;
     set meta(arg: {
         source: string;
         source_address: string;
@@ -52,7 +52,7 @@ declare class Request extends Emitter {
      * @return {boolean}
      */
     get isNewInvite(): boolean;
-    get url(): any;
+    get url(): string;
     set agent(arg: DrachtioAgent);
     get agent(): DrachtioAgent;
     /** @type {import('./drachtio-agent')} */
@@ -171,17 +171,17 @@ declare class Request extends Emitter {
      * @returns {boolean}
      */
     isUnauthenticated(): boolean;
-    get(...args: any[]): any;
-    has(...args: any[]): any;
+    get(...args: any[]): string;
+    has(...args: any[]): boolean;
     getParsedHeader(...args: any[]): any;
-    set(...args: any[]): any;
+    set(...args: any[]): sip.SipMessage;
     set method(arg: string);
     /**
      * @type {string | 'INVITE' | 'REFER' | 'NOTIFY' | 'BYE'}
      */
     get method(): string;
-    set uri(arg: any);
-    get uri(): any;
+    set uri(arg: string);
+    get uri(): string;
     set headers(arg: Record<string, string>);
     /**
      * @return {Record<string, string>}
@@ -194,13 +194,14 @@ declare class Request extends Emitter {
     get body(): string;
     set payload(arg: any);
     get payload(): any;
-    get type(): any;
-    get raw(): any;
-    get callingNumber(): any;
-    get callingName(): any;
-    get calledNumber(): any;
-    get canFormDialog(): any;
+    get type(): "request" | "response";
+    get raw(): string;
+    get callingNumber(): string;
+    get callingName(): string;
+    get calledNumber(): string;
+    get canFormDialog(): boolean;
 }
 import Emitter_1 = require("events");
 import Emitter = Emitter_1.EventEmitter;
+import sip = require("drachtio-sip");
 import DrachtioAgent = require("./drachtio-agent");

@@ -46,11 +46,11 @@ declare class Srf extends Emitter {
      * });
      */
     static get parseUri(): Function;
-    static get stringifyUri(): any;
+    static get stringifyUri(): typeof parser.stringifyUri;
     /**
-     * @returns {import('drachtio-sip').SipMessage}
+     * @returns {typeof import('drachtio-sip').SipMessage}
      */
-    static get SipMessage(): any;
+    static get SipMessage(): typeof SipMessage;
     /**
      * @return {typeof Request}
      */
@@ -469,6 +469,7 @@ declare class Srf extends Emitter {
     * @param {Boolean} [opts.followRedirects=false] - if true, handle 3XX redirect responses by
     * generating a new request as per the Contact header; otherwise, proxy the 3XX response
     * back upstream without generating a new response
+    * @param {string | any[]} [opts.destination]
     * @param  {function} [callback] - callback invoked when proxy operation completes, signature (err, results)
     * where `results` is a JSON object describing the individual sip call attempts and results
     * @returns {Srf|Promise} returns a Promise if no callback is supplied, otherwise the Srf object
@@ -500,6 +501,7 @@ declare class Srf extends Emitter {
         provisionalTimeout?: string;
         finalTimeout?: string;
         followRedirects?: boolean;
+        destination?: string | any[];
     }, callback?: Function): Srf | Promise<any>;
     /**
      * Send an outbound request outside of a Dialog.
@@ -608,7 +610,79 @@ declare class Srf extends Emitter {
      * @param {(req: Request, res: Response) => void} cb
      * @returns
      */
+    bye(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
     register(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    info(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    subscribe(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    options(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    message(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    notify(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    cancel(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    update(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    prack(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    ack(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    refer(cb: (req: Request, res: Response) => void): any;
+    /**
+     *
+     * @param {(req: Request, res: Response) => void} cb
+     * @returns
+     */
+    publish(cb: (req: Request, res: Response) => void): any;
 }
 import Emitter = require("events");
 import Dialog_1 = require("./dialog");
@@ -619,5 +693,9 @@ import Socket_1 = require("net");
 import Socket = Socket_1.Socket;
 import SipError_1 = require("./sip_error");
 import SipError = SipError_1.SipError;
+import parser_1 = require("drachtio-sip/lib/parser");
+import parser = parser_1.parser;
+import SipMessage_1 = require("drachtio-sip/lib/message");
+import SipMessage = SipMessage_1.SipMessage;
 import { DialogState } from "./types";
 import { DialogDirection } from "./types";
